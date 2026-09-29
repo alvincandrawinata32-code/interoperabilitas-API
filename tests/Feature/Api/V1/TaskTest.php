@@ -9,6 +9,7 @@ use App\Models\Task;
 
 class TaskTest extends TestCase
 {
+    use RefreshDatabase;
     public function test_user_dapat_melihat_daftar_task()
     {
         //Arrange

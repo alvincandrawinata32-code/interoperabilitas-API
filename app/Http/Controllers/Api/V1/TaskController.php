@@ -17,7 +17,10 @@ class TaskController extends Controller
     {
         // return Task::all();
         // return TaskResource::collection(Task::all());
-        return Task::all() ->toResourceCollection(TaskResource::class);
+        //return Task::all() ->toResourceCollection(TaskResource::class);
+        return response()->json([
+            'all' => Task::all() ->toResourceCollection(TaskResource::class)
+        ]);
         
     }
 
@@ -62,6 +65,8 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task)
     {
         //
+        $task->update($request->validated());
+        return $task->toResource();
     }
 
     /**
@@ -70,5 +75,7 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         //
+        $task->delete();
+        return response()->noContent();
     }
 }
