@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\TaskController;
 use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Auth\LogoutController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -15,4 +17,6 @@ Route::prefix('v1')->group(function () {
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [LoginController::class, '__invoke']);
+    Route::post('/register', [RegisterController::class, '__invoke']);
+    Route::post('/logout', [LogoutController::class, '__invoke'])->middleware('auth:sanctum');
 });

@@ -124,4 +124,77 @@ class AuthTest extends TestCase
         //Assert
         $response->assertStatus(401);
     }
+
+    public function test_user_dapat_register()
+    {
+        //Arrange
+        $userData = [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ];
+
+        //Act
+        $response = $this->post('/api/auth/register', $userData);
+
+        //Assert
+        $response->assertStatus(201);
+    }
+
+    public function test_register_gagal_jika_email_sudah_terdaftar()
+    {
+        //Arrange
+        $existingUser = \App\Models\User::factory()->create([
+            'email' => 'test@example.com',
+        ]);
+
+        $userData = [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ];
+
+        //Act
+        $response = $this->post('/api/auth/register', $userData);
+
+        //Assert
+        $response->assertStatus(422);
+    }
+
+    public function test_register_gagal_jika_password_kurang_dari_8_karakter()
+    {
+        //Arrange
+        $userData = [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'short',
+            'password_confirmation' => 'short',
+        ];
+
+        //Act
+        $response = $this->post('/api/auth/register', $userData);
+
+        //Assert
+        $response->assertStatus(422);
+    }
+
+    public function test_user_dapat_logout()
+    {
+        //Arrange
+        $user = \App\Models\User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        //Act
+        $response = $this->withHeader('Authorization', "Bearer $token")
+            ->post('/api/auth/logout');
+
+        //Assert
+        $response->assertStatus(200);
+    }
 }
